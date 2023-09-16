@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from io import BytesIO
 from typing import Dict, List, Optional, TypedDict, Union, cast
 
-import aiofiles
+import anyio
 from nonebot import logger
 from nonebot.adapters.onebot.v11 import MessageSegment
 from pil_utils import BuildImage, Text2Image
@@ -76,19 +76,17 @@ def set_gacha_cool_down(user: Union[str, int], group: Optional[Union[str, int]] 
 
 
 async def set_gacha_data(qq: str, data: GachaData):
-    async with aiofiles.open(str(GACHA_DATA_PATH), "r+", encoding="u8") as f:
-        j = json.loads(await f.read())
-        j[qq] = data
-
-        await f.seek(0)
-        await f.truncate()
-
-        await f.write(json.dumps(j))
+    f = await anyio.Path(GACHA_DATA_PATH).open("r+", encoding="u8")
+    j = json.loads(await f.read())
+    j[qq] = data
+    await f.seek(0)
+    await f.truncate()
+    await f.write(json.dumps(j))
 
 
 async def get_gacha_data(qq: str) -> GachaData:
-    async with aiofiles.open(str(GACHA_DATA_PATH), encoding="u8") as f:
-        j = await f.read()
+    f = await anyio.Path(GACHA_DATA_PATH).open(encoding="u8")
+    j = await f.read()
 
     data: Dict[str, GachaData] = json.loads(j)
     if not (user_data := data.get(qq)):
