@@ -19,7 +19,7 @@ if "nonebot_plugin_PicMenu" not in get_available_plugin_names():
 
 require("nonebot_plugin_PicMenu")
 
-from nonebot_plugin_PicMenu import menu_manager  # noqa: E402
+from nonebot_plugin_PicMenu import menu_manager  # noqa: E402 # type: ignore
 
 usage = f"请使用指令 [ba帮助 {FT_S}功能名称或序号{FT_E}] 查看某功能详细介绍"
 extra = {"menu_template": "default", "menu_data": help_list}
@@ -38,9 +38,9 @@ async def help_handle(matcher: Matcher, arg_msg: Message = CommandArg()):
     img = cast(
         Union[str, Image.Image],
         (
-            menu_manager.generate_plugin_menu_image("BAWiki")
-            if not arg
-            else menu_manager.generate_func_details_image("BAWiki", arg)
+            menu_manager.generate_func_details_image("BAWiki", arg)
+            if arg
+            else menu_manager.generate_plugin_menu_image("BAWiki")
         ),
     )
 

@@ -68,9 +68,7 @@ cmd_raid_wiki = on_shell_command("ba总力战", parser=raid_wiki_parser)
 
 @cmd_raid_wiki.handle()
 async def _(matcher: Matcher, foo: ParserExit = ShellCommandArgs()):
-    im = ""
-    if foo.status != 0:
-        im = "参数错误\n"
+    im = "参数错误\n" if foo.status != 0 else ""
     await matcher.finish(f"{im}{foo.message}")
 
 
@@ -85,9 +83,7 @@ async def _(matcher: Matcher, args: Namespace = ShellCommandArgs()):
             server.add(0)
         elif ("国" in s) or ("g" in s):
             server.add(1)
-    server = list(server)
-    server.sort()
-
+    server = sorted(server)
     tasks = []
     if not args.name:
         try:

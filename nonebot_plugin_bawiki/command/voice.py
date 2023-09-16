@@ -98,10 +98,10 @@ async def _(matcher: Matcher, cmd_arg: Message = CommandArg()):
     im = [f"学生 {org_stu_name} {voice_type}语音 {v.title}"]
     if v.jp or v.cn:
         im.append("-=-=-=-=-=-=-=-")
-        if v.jp:
-            im.append(v.jp)
-        if v.cn:
-            im.append(v.cn)
+    if v.jp:
+        im.append(v.jp)
+    if v.cn:
+        im.append(v.cn)
     await matcher.send("\n".join(im))
 
     if config.ba_voice_use_card:

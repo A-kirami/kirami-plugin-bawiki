@@ -1,10 +1,11 @@
 from typing import Optional
 
+from kirami.config import BaseConfig
 from nonebot import get_driver
-from pydantic import BaseModel, validator
+from pydantic import validator
 
 
-class Cfg(BaseModel):
+class Config(BaseConfig):
     ba_proxy: Optional[str] = None
     ba_gacha_cool_down: int = 0
     ba_voice_use_card: bool = False
@@ -34,4 +35,4 @@ class Cfg(BaseModel):
         return v
 
 
-config = Cfg.parse_obj(get_driver().config.dict())
+config = Config.parse_obj(get_driver().config.dict())

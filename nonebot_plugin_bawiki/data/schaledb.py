@@ -5,13 +5,13 @@ from datetime import datetime
 from io import BytesIO
 from typing import Any, Dict, List, Literal, cast, overload
 
+from kirami.utils import WebWright
 from nonebot import logger
 from nonebot.adapters.onebot.v11 import MessageSegment
-from nonebot_plugin_htmlrender import get_new_page
 from PIL import Image, ImageFilter
 from PIL.Image import Resampling
 from pil_utils import BuildImage, text2image
-from playwright.async_api import Page, ViewportSize
+from playwright.async_api import ViewportSize
 
 from ..config import config
 from ..resource import (
@@ -63,7 +63,7 @@ async def schale_get_stu_dict(key="Name"):
 
 
 async def schale_get_stu_info(stu):
-    async with cast(Page, get_new_page(**PAGE_KWARGS)) as page:
+    async with WebWright.new_page(**PAGE_KWARGS) as page:
         await page.goto(config.ba_schale_url, wait_until="domcontentloaded")
         await page.evaluate(SCHALE_UTIL_JS)
 
@@ -513,7 +513,7 @@ async def schale_get_calender(
         )
 
     bg_w = 1500
-    bg_h = 200 + sum([x.height + 50 for x in img])
+    bg_h = 200 + sum(x.height + 50 for x in img)
     bg = (
         BuildImage.new("RGBA", (bg_w, bg_h))
         .paste(RES_CALENDER_BANNER.copy().resize((1500, 150)))

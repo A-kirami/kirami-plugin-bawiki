@@ -16,9 +16,9 @@ from typing import (
 )
 
 from httpx import AsyncClient
+from kirami.utils import scheduler
 from nonebot import logger
 from nonebot.adapters.onebot.v11 import Message
-from nonebot_plugin_apscheduler import scheduler
 from PIL import Image, ImageOps
 
 from .config import config
@@ -46,7 +46,7 @@ async def get_req_cache(
     json: Optional[bool] = None,
     params: Optional[str] = None,
 ) -> Optional[Any]:
-    cache = next(
+    if cache := next(
         (
             c
             for c in req_cache
@@ -59,8 +59,7 @@ async def get_req_cache(
             )
         ),
         None,
-    )
-    if cache:
+    ):
         while cache.content is None:
             logger.debug(f"Waiting for cache {url}")
             await asyncio.sleep(0.1)

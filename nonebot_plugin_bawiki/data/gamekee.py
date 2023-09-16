@@ -9,14 +9,13 @@ from io import BytesIO
 from typing import Any, Dict, List, Literal, NoReturn, Optional, Union, cast
 
 from bs4 import BeautifulSoup, PageElement, ResultSet, Tag
+from kirami.utils import WebWright
 from nonebot import logger
 from nonebot.adapters.onebot.v11 import Message, MessageSegment
 from nonebot.internal.matcher import Matcher
-from nonebot_plugin_htmlrender import get_new_page
 from PIL import Image
 from PIL.Image import Resampling
 from pil_utils import BuildImage, text2image
-from playwright.async_api import Page
 
 from ..config import config
 from ..resource import GAMEKEE_UTIL_JS, RES_CALENDER_BANNER, RES_GRADIENT_BG
@@ -77,7 +76,7 @@ def game_kee_page_url(sid: int) -> str:
 
 
 async def game_kee_get_page(url: str) -> List[BytesIO]:
-    async with cast(Page, get_new_page()) as page:
+    async with WebWright.new_page() as page:
         await page.goto(url, timeout=config.ba_screenshot_timeout * 1000)
 
         await page.evaluate(GAMEKEE_UTIL_JS)
@@ -236,7 +235,7 @@ async def game_kee_get_calender_page(ret, has_pic=True) -> List[BytesIO]:
 
     def draw_list(li: List[BuildImage], title: str) -> BuildImage:
         bg_w = 1500
-        bg_h = 200 + sum([x.height + 50 for x in li])
+        bg_h = 200 + sum(x.height + 50 for x in li)
         bg = (
             BuildImage.new("RGBA", (bg_w, bg_h))
             .paste(RES_CALENDER_BANNER.copy().resize((1500, 150)))
@@ -471,9 +470,7 @@ def tags_to_str(tag: PageElement) -> str:
         text = elem if isinstance(elem, str) else elem.text
         if s := text.strip().replace("\u200b", ""):
             return s
-        if hasattr(elem, "name") and (elem.name == "img" or elem.name == "br"):  # type: ignore
-            return "\n"
-        return ""
+        return "\n" if hasattr(elem, "name") and elem.name in ["img", "br"] else ""  # type: ignore
 
     text = process(tag).strip()
     if not text:

@@ -1,3 +1,4 @@
+import contextlib
 import datetime
 from typing import TYPE_CHECKING, Literal, Optional
 
@@ -83,8 +84,9 @@ async def _(matcher: Matcher, state: T_State, arg: Message = CommandArg()):
         used_global_pfx = next(filter(args.startswith, GLOBAL_PFX), None)
         used_chinese_pfx = next(filter(args.startswith, CHINESE_PFX), None)
 
-        used_pfx = next((x for x in (used_chinese_pfx, used_global_pfx) if x), None)
-        if used_pfx:
+        if used_pfx := next(
+            (x for x in (used_chinese_pfx, used_global_pfx) if x), None
+        ):
             args = args[len(used_pfx) :].strip()
 
         is_chinese = used_chinese_pfx
@@ -108,11 +110,9 @@ async def _(matcher: Matcher, state: T_State, arg: Message = CommandArg()):
     if date:
         parsed_date = None
         for f in ["%Y/%m/%d", "%Y-%m-%d", "%Y年%m月%d日", "%m/%d", "%m-%d", "%m月%d日"]:
-            try:
+            with contextlib.suppress(ValueError):
                 parsed_date = datetime.datetime.strptime(date.replace(" ", ""), f)
                 break
-            except ValueError:
-                pass
         if not parsed_date:
             await matcher.finish("日期格式不正确！")
         date = parsed_date

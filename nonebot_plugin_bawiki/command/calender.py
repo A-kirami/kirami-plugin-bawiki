@@ -64,11 +64,9 @@ async def _(
 ):
     args: List[str] = cmd_arg.extract_plain_text().strip().lower().split()
 
-    gamekee = True
     servers: List[Literal["Jp", "Global", "Cn"]] = []
 
-    if any((x in ("夏莱", "沙勒", "s", "schale", "schaledb")) for x in args):
-        gamekee = False
+    gamekee = all(x not in ("夏莱", "沙勒", "s", "schale", "schaledb") for x in args)
     if any((x in ("日", "日服", "j", "jp", "japan")) for x in args):
         servers.append("Jp")
     if any((x in ("国际", "国际服", "g", "gl", "global")) for x in args):

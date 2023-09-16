@@ -89,7 +89,7 @@ async def _(matcher: Matcher, cmd_arg: Message = CommandArg()):
         if not (lvl := stu["MemoryLobby"]):
             await matcher.finish("该学生没有L2D")
 
-        im = Message() + f'{stu["Name"]} 在羁绊等级 {lvl[0]} 时即可解锁L2D\n'
+        im = Message(f'{stu["Name"]} 在羁绊等级 {lvl[0]} 时即可解锁L2D\n')
         if p := await get_l2d(await schale_to_gamekee(arg)):
             images = await asyncio.gather(*[async_req(x, raw=True) for x in p])
             image_seg = "L2D预览：" + Message(MessageSegment.image(x) for x in images)
@@ -107,7 +107,7 @@ async def _(matcher: Matcher, cmd_arg: Message = CommandArg()):
             await matcher.finish(im + image_seg)
         except ActionFailed:
             if image_seg:
-                await matcher.finish(im + "抱歉，L2D 图片被 tx 风控了，或许是因为太涩了……")
+                await matcher.finish(f"{im}抱歉，L2D 图片被 tx 风控了，或许是因为太涩了……")
             raise
 
     await matcher.finish("未找到学生")
