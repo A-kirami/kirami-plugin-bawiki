@@ -1,8 +1,4 @@
-from nonebot import require
 from nonebot.plugin import PluginMetadata
-
-require("nonebot_plugin_apscheduler")
-require("nonebot_plugin_htmlrender")
 
 from .command import load_commands  # noqa: E402
 from .config import Config as Config  # noqa: E402
